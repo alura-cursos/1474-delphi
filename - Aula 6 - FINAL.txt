@@ -10,7 +10,7 @@ uses
   FireDAC.Phys.MSAcc, FireDAC.Phys.MSAccDef, FireDAC.VCLUI.Wait,
   FireDAC.Stan.Param, FireDAC.DatS, FireDAC.DApt.Intf, FireDAC.DApt, Data.DB,
   FireDAC.Comp.DataSet, FireDAC.Comp.Client, Vcl.Grids, Vcl.DBGrids,
-  Vcl.ExtCtrls, Vcl.Buttons;
+  Vcl.ExtCtrls, Vcl.Buttons, Vcl.Imaging.jpeg;
 
 type
   TForm2 = class(TForm)
@@ -37,6 +37,12 @@ type
     btn_CANCELAR: TButton;
     txt_PROCURA: TEdit;
     SpeedButton1: TSpeedButton;
+    DBGrid1: TDBGrid;
+    SpeedButton2: TSpeedButton;
+    img_FOTO: TImage;
+    SpeedButton3: TSpeedButton;
+    OpenDialog1: TOpenDialog;
+    OpenDialog2: TOpenDialog;
     procedure carrega;
     procedure bloqueia;
     procedure limpa;
@@ -50,6 +56,9 @@ type
     procedure btn_EDITARClick(Sender: TObject);
     procedure btn_CANCELARClick(Sender: TObject);
     procedure SpeedButton1Click(Sender: TObject);
+    procedure SpeedButton2Click(Sender: TObject);
+    procedure DBGrid1DblClick(Sender: TObject);
+    procedure SpeedButton3Click(Sender: TObject);
 
   private
     { Private declarations }
@@ -65,6 +74,8 @@ var
 implementation
 
 {$R *.dfm}
+
+uses Unit3;
 
 procedure Tform2.bloqueia;
 begin
@@ -99,6 +110,25 @@ begin
      showmessage('nao encontrado')
 
 
+
+
+
+end;
+
+procedure TForm2.SpeedButton2Click(Sender: TObject);
+begin
+form2.hide;
+form3.show;
+end;
+
+procedure TForm2.SpeedButton3Click(Sender: TObject);
+begin
+opendialog1.Execute();
+//showmessage (opendialog1.FileName);
+img_FOTO.Picture.LoadFromFile(opendialog1.FileName);
+fdcontatos.Edit;
+fdcontatos.FieldByName('foto').Value :=  opendialog1.FileName;
+fdcontatos.Post;
 
 
 
@@ -176,9 +206,38 @@ if fdcontatos.FieldByName('observacoes').Value = NULL then
    txt_OBS.text :=''
 else
  txt_OBS.text      := fdcontatos.FieldByName('observacoes').Value;
+
+
+if fdcontatos.fieldbyname('foto').Value <> null then
+   begin
+      if fileexists(fdcontatos.fieldbyname('foto').Value) then
+        img_FOTO.Picture.LoadFromFile(fdcontatos.fieldbyname('foto').Value)
+   end
+else
+        img_FOTO.picture := nil;
+
+
+
+
+
+
+
+
+
 end;
 
 
+
+
+
+
+
+
+procedure TForm2.DBGrid1DblClick(Sender: TObject);
+begin
+ carrega;
+
+end;
 
 procedure TForm2.FDContatosBeforePost(DataSet: TDataSet);
 begin
